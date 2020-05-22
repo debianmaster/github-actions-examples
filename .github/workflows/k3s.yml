@@ -1,0 +1,21 @@
+name: Run tests
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      k3s:
+        image: debianmaster/k3s
+        ports:
+        - 6443:6443
+        volumes:
+        - /tmp/output:/output
+        options: --privileged	
+    steps:
+    - run: |
+        sleep 10
+        export KUBECONFIG=/tmp/output/kubeconfig.yaml
+        kubectl get nodes
+        kubectl get po -A
