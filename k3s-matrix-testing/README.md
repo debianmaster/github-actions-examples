@@ -1,3 +1,37 @@
+## Action
+```sh
+name: Matrix Testing
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        k8s_version: [v0.8.1,v0.9.0,v1.16.9-k3s1,v1.17.4-k3s1,v1.18.2-k3s1]
+    steps:
+    - name: Test on k3s
+      run: |
+        export KUBECONFIG=/tmp/output/kubeconfig-${{ matrix.k8s_version }}.yaml
+        export K3S_VERSION=${{ matrix.k8s_version }}
+        
+        echo "K3S_TOKEN=mytoken" > .env
+        echo "K3S_KUBECONFIG_OUTPUT=${KUBECONFIG}" >> .env
+        echo "K3S_KUBECONFIG_MODE=666" >> .env 
+        
+        docker run -d --privileged --name k3s-${K3S_VERSION} --env-file .env -v /tmp/output:/tmp/output -p 6443:6443 rancher/k3s:${K3S_VERSION} server 
+        
+        until [ -f "$KUBECONFIG" ]
+        do
+             sleep 2
+             echo "waiting for kubeconfig file.."
+        done
+        sleep 2
+        
+        kubectl get nodes
+        kubectl get po -A
+ ```
+
+
 ```
 k3s version and k8s version mappings
 | k3s                       | k8s      |
