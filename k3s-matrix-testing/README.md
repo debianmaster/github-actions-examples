@@ -18,7 +18,9 @@ jobs:
         echo "K3S_KUBECONFIG_OUTPUT=${KUBECONFIG}" >> .env
         echo "K3S_KUBECONFIG_MODE=666" >> .env 
         
-        docker run -d --privileged --name k3s-${K3S_VERSION} --env-file .env -v /tmp/output:/tmp/output -p 6443:6443 rancher/k3s:${K3S_VERSION} server 
+        docker run -d --privileged --name k3s-${K3S_VERSION} \
+        --env-file .env -v /tmp/output:/tmp/output -p 6443:6443 \
+        rancher/k3s:${K3S_VERSION} server 
         
         until [ -f "$KUBECONFIG" ]
         do
