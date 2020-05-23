@@ -31,6 +31,7 @@ jobs:
         kubectl get po -A
  ```
 
+## K3S to K8s Mapping
 
 ```
 k3s version and k8s version mappings
